@@ -1,6 +1,7 @@
 // Rotating 3D car preview for the garage screen
 import * as THREE from 'three';
 import { buildCar, mat } from './cars3d.js';
+import { Models } from './models.js';
 
 export class Preview {
   constructor(canvas) {
@@ -21,7 +22,10 @@ export class Preview {
   }
   setCar(opts) {
     if (this.car) this.scene.remove(this.car);
-    this.car = buildCar(opts); this.scene.add(this.car);
+    const m = opts.model && Models.get(opts.model);
+    this.car = m || buildCar(opts); this.scene.add(this.car);
+    if (!m && opts.model) Models.load(opts.model).then(() => { if (this.lastOpts === opts) this.setCar(opts); });
+    this.lastOpts = opts;
   }
   resize() {
     const w = this.canvas.clientWidth || 300, h = this.canvas.clientHeight || 200;

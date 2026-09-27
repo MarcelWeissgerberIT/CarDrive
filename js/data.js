@@ -16,11 +16,11 @@ export const CARS = [
 
 export const TRACKS = [
   { id: 'candy', name: { de: 'Zuckerwatte-Highway', en: 'Cotton Candy Highway' }, length: 2200, stars: 1,
-    sky: '#8ce4ff', fog: '#b9f0ff', ground: '#79e56a', road: '#6b4f8f', edge: '#ff63b8', aiSpeed: 0.86, density: 0.8, coinMul: 1 },
+    sky: '#8ce4ff', skyTop: '#4fb8ff', fog: '#d8f6ff', ground: '#7ee36b', hillTop: '#ffb3e0', road: '#6b4f8f', edge: '#ff63b8', hills: 1, pano: [['#b9a6ff', 0.6], ['#ffb3e0', 0.68], ['#a6f0ff', 0.76]], aiSpeed: 0.86, density: 0.8, coinMul: 1 },
   { id: 'choco', name: { de: 'Schoko-Canyon', en: 'Choco Canyon' }, length: 3400, stars: 2,
-    sky: '#ffb15c', fog: '#ffd39a', ground: '#8a5a2e', road: '#4a2d1f', edge: '#ffd23f', aiSpeed: 0.95, density: 1.0, coinMul: 1.4 },
+    sky: '#ffb15c', skyTop: '#ff6f91', fog: '#ffe0b0', ground: '#9a6a3a', hillTop: '#f7c9a0', road: '#4a2d1f', edge: '#ffd23f', hills: 1.4, pano: [['#c46a8a', 0.55], ['#7a4a2a', 0.64], ['#e8a86a', 0.74]], aiSpeed: 0.95, density: 1.0, coinMul: 1.4 },
   { id: 'neon', name: { de: 'Neon-Jelly-Nacht', en: 'Neon Jelly Night' }, length: 4800, stars: 3,
-    sky: '#1a0b3a', fog: '#3a1a6a', ground: '#2b1450', road: '#1d1035', edge: '#2ef2ff', aiSpeed: 1.02, density: 1.25, coinMul: 1.9, night: true },
+    sky: '#2a1360', skyTop: '#0a0520', fog: '#4a2a8a', ground: '#3a1c66', hillTop: '#7a3fb0', road: '#1d1035', edge: '#2ef2ff', hills: 1.2, pano: [['#1a0b3a', 0.58], ['#3a1a6a', 0.66], ['#5a2f9a', 0.75]], aiSpeed: 1.02, density: 1.25, coinMul: 1.9, night: true },
 ];
 
 export const POWERUPS = [

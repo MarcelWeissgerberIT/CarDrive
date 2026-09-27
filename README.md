@@ -41,8 +41,10 @@ python3 -m http.server 8080
 
 ## Technik
 
-- Vanilla JS (ES-Module) + [three.js](https://threejs.org/) via CDN, kein Build-Schritt
-- Grafiken (Logo, Menü-Hintergrund, Fahrzeugportraits, Power-up-Icons, Gegner-Avatare) generiert mit **OpenArt** (Seedream 4.5 / Nano Banana Pro)
+- Vanilla JS (ES-Module) + [three.js](https://threejs.org/), kein Build-Schritt
+- Grafiken (Logo, Menü-Hintergrund, Fahrzeugportraits, Power-up-Icons, Gegner-Avatare, Deko-Referenzen) generiert mit **OpenArt** (Seedream 4.5 / Nano Banana Pro)
+- 3D-Modelle (6 Fahrzeuge, 7 Landschafts-Objekte) aus den OpenArt-Bildern mit **Higgsfield** (Tripo H3.1 Image-to-3D) erzeugt, mit gltf-transform optimiert (`assets/models/`)
+- three.js liegt lokal unter `vendor/three/` (kein CDN nötig)
 - Deployment: GitHub Actions → GitHub Pages (`.github/workflows/pages.yml`)
 
 ## Struktur
@@ -51,7 +53,8 @@ python3 -m http.server 8080
 index.html          Screens + HUD
 css/style.css       Kaugummi-Look
 js/main.js          App-Controller (Menü, Garage, Shop, Quests, Rennen-Flow)
-js/game.js          Rennen-Engine (three.js, Straße, Hindernisse, KI, Power-ups)
+js/game.js          Rennen-Engine (Terrain, Himmel, Straße, Hindernisse, KI, Power-ups)
+js/models.js        GLB-Loader mit Toon-Shading und Cartoon-Umrandung
 js/cars3d.js        Prozedurale Toy-Car-Modelle
 js/garage.js        3D-Vorschau
 js/input.js         Lenkrad / Wisch / Tastatur / Neigung
@@ -60,4 +63,6 @@ js/data.js          Fahrzeuge, Strecken, Shop, Quests
 js/i18n.js          DE / EN
 js/save.js          Spielstand
 assets/img/         OpenArt-Grafiken
+assets/models/      GLB-3D-Modelle
+vendor/three/       three.js + GLTFLoader
 ```

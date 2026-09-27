@@ -6,9 +6,17 @@ function box(w, h, d) { const k = `b${w},${h},${d}`; return geoCache[k] || (geoC
 function cyl(r, h, s = 16) { const k = `c${r},${h},${s}`; return geoCache[k] || (geoCache[k] = new THREE.CylinderGeometry(r, r, h, s)); }
 function sph(r, s = 12) { const k = `s${r},${s}`; return geoCache[k] || (geoCache[k] = new THREE.SphereGeometry(r, s, s)); }
 
-export function mat(color, opts = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness: opts.rough ?? 0.45, metalness: opts.metal ?? 0.05, emissive: opts.emissive || 0x000000, emissiveIntensity: opts.ei ?? 1, transparent: !!opts.opacity, opacity: opts.opacity ?? 1 });
+let _grad = null;
+export function gradientMap() {
+  if (_grad) return _grad;
+  const t = new THREE.DataTexture(new Uint8Array([90, 150, 215, 255]), 4, 1, THREE.RedFormat);
+  t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return (_grad = t);
 }
+// Toon ("cel") shaded material for the bubblegum cartoon look
+export function toonMat(color, opts = {}) {
+  return new THREE.MeshToonMaterial({ color, gradientMap: gradientMap(), emissive: opts.emissive || 0x000000, emissiveIntensity: opts.ei ?? 1, transparent: !!opts.opacity, opacity: opts.opacity ?? 1 });
+}
+export function mat(color, opts = {}) { return toonMat(color, opts); }
 
 const DIM = {
   beetle: { w: 2.0, h: 0.8, l: 3.6, cab: [1.7, 0.7, 1.9], cabZ: 0.1, wheelR: 0.42, wheelZ: 1.2 },

@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js","three/addons/":"./vendor/three/addons/"}}</script>
 </head>
 <body>
 <div id="app">
@@ -126,6 +126,7 @@
     <div class="row"><button id="btn-again" class="big-btn pink" data-t="again"></button><button id="btn-menu" class="big-btn cyan" data-t="menu"></button></div>
   </div></div>
 
+  <div id="loading" class="modal hidden"><div class="box"><h2 data-t="loading"></h2><div class="qbar load-bar"><b id="load-fill" style="width:0%"></b></div></div></div>
   <div id="toast"></div>
 </div>
 <script type="module" src="js/main.js"></script>

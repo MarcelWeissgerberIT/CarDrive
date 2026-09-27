@@ -6,6 +6,7 @@ import { Audio } from './audio.js';
 import { RaceGame } from './game.js';
 import { Preview } from './garage.js';
 import { Input } from './input.js';
+import { Models, MODEL_DEFS } from './models.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -89,7 +90,7 @@ function renderGarage() {
     list.appendChild(card);
   });
   $('#preview-name').textContent = I18N.pick(carById(S.selectedCar).name);
-  preview.setCar({ body: carById(S.selectedCar).body, color: paintColor(), rim: rimColor(), decal: decalEmoji() });
+  preview.setCar({ body: carById(S.selectedCar).body, color: paintColor(), rim: rimColor(), decal: decalEmoji(), model: 'car_' + S.selectedCar });
   renderCosmetics();
 }
 $$('.cos-tabs .tab').forEach(b => b.onclick = () => { cosTab = b.dataset.tab; $$('.cos-tabs .tab').forEach(x => x.classList.toggle('active', x === b)); renderCosmetics(); });
@@ -156,8 +157,14 @@ function claimQuest(q) {
 // ---------- race ----------
 const hud = { place: $('#hud-place'), progress: $('#hud-progress'), racers: $('#hud-racers'), coins: $('#hud-coins'), speed: $('#hud-speed'), effects: $('#hud-effects'), pus: $('#hud-powerups'), cd: $('#countdown'), lines: $('#speedlines'), flash: $('#flash') };
 let raceInventory = null, lastCd = null;
-function startRace(track) {
+const modelsReady = Models.preload(Object.keys(MODEL_DEFS), p => { const el = $('#load-fill'); if (el) el.style.width = Math.round(p * 100) + '%'; });
+async function startRace(track) {
   currentTrack = track; unlockAudio(); preview.stop();
+  if (Models.progress < 1) {
+    $('#loading').classList.remove('hidden');
+    await Promise.race([modelsReady, new Promise(r => setTimeout(r, 15000))]);
+    $('#loading').classList.add('hidden');
+  }
   raceInventory = { ...S.inventory };
   const car = carById(S.selectedCar);
   $$('.screen').forEach(s => s.classList.add('hidden')); $('#hud').classList.remove('hidden');
