@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ff5fb3">
+<title>CarDrive – Candy Racing</title>
+<link rel="icon" href="assets/img/pu_nitro.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="screen hidden">
+    <div class="hud-top">
+      <div class="place-badge"><span id="hud-place">4</span><small>/4</small></div>
+      <div class="progress"><div class="progress-bar"><div id="hud-progress" class="progress-fill"></div></div><div id="hud-racers" class="racers"></div></div>
+      <div class="hud-coins pill"><span class="ico">🪙</span><span id="hud-coins">0</span></div>
+      <div class="hud-speed pill"><span id="hud-speed">0</span><small>km/h</small></div>
+      <button id="btn-pause" class="icon-btn">❚❚</button>
+    </div>
+    <div id="hud-effects" class="effects"></div>
+    <div id="hud-powerups" class="powerups"></div>
+    <div id="steerzone">
+      <div id="wheel">
+        <svg viewBox="0 0 200 200">
+          <defs><radialGradient id="rimg" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#ff9ecf"/><stop offset="1" stop-color="#ff3fa0"/></radialGradient>
+          <radialGradient id="hubg" cx="45%" cy="35%" r="65%"><stop offset="0" stop-color="#6ff0ff"/><stop offset="1" stop-color="#1fb8d8"/></radialGradient></defs>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="#3a1d4f" stroke-width="30"/>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="url(#rimg)" stroke-width="22"/>
+          <g stroke="#3a1d4f" stroke-width="22" stroke-linecap="round"><line x1="100" y1="100" x2="22" y2="100"/><line x1="100" y1="100" x2="178" y2="100"/><line x1="100" y1="100" x2="100" y2="178"/></g>
+          <g stroke="#ffe23f" stroke-width="12" stroke-linecap="round"><line x1="100" y1="100" x2="24" y2="100"/><line x1="100" y1="100" x2="176" y2="100"/><line x1="100" y1="100" x2="100" y2="176"/></g>
+          <circle cx="100" cy="100" r="34" fill="#3a1d4f"/><circle cx="100" cy="100" r="28" fill="url(#hubg)"/>
+          <text x="100" y="110" text-anchor="middle" font-size="28">⭐</text>
+          <circle cx="100" cy="24" r="7" fill="#fff"/>
+        </svg>
+      </div>
+      <div id="steer-hint" class="hint"></div>
+    </div>
+    <div id="speedlines"></div>
+    <div id="countdown" class="countdown"></div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- ===== MAIN MENU ===== -->
+  <div id="menu" class="screen menu-bg">
+    <div class="topbar">
+      <div class="currency"><span class="pill coins">🪙 <b class="v-coins">0</b></span><span class="pill gems">💎 <b class="v-gems">0</b></span></div>
+      <div class="topbar-right"><button id="btn-lang" class="icon-btn">DE</button><button id="btn-settings" class="icon-btn">⚙️</button></div>
+    </div>
+    <img id="logo" src="assets/img/logo.jpg" alt="CarDrive">
+    <div class="menu-buttons">
+      <button id="btn-play" class="big-btn pink" data-t="play">Rennen</button>
+      <div class="row">
+        <button id="btn-garage" class="big-btn cyan" data-t="garage">Garage</button>
+        <button id="btn-shop" class="big-btn yellow" data-t="shop">Shop</button>
+        <button id="btn-quests" class="big-btn purple" data-t="quests">Quests<span id="quest-dot" class="dot hidden"></span></button>
+      </div>
+    </div>
+    <div class="menu-car"><img id="menu-car-img" src="" alt=""><div id="menu-car-name"></div></div>
+    <div class="footer"><span data-t="credits"></span></div>
+  </div>
+
+  <!-- ===== TRACK SELECT ===== -->
+  <div id="tracks" class="screen sub hidden">
+    <div class="topbar"><button class="icon-btn back">←</button><h1 data-t="chooseTrack"></h1><div class="currency"><span class="pill coins">🪙 <b class="v-coins">0</b></span><span class="pill gems">💎 <b class="v-gems">0</b></span></div></div>
+    <div id="track-list" class="cards"></div>
+    <div class="opp-row"><span data-t="opponents"></span><div id="opp-list"></div></div>
+  </div>
+
+  <!-- ===== GARAGE ===== -->
+  <div id="garage" class="screen sub hidden">
+    <div class="topbar"><button class="icon-btn back">←</button><h1 data-t="garage"></h1><div class="currency"><span class="pill coins">🪙 <b class="v-coins">0</b></span><span class="pill gems">💎 <b class="v-gems">0</b></span></div></div>
+    <div class="garage-layout">
+      <div class="preview-wrap"><canvas id="preview"></canvas><div id="preview-name" class="preview-name"></div>
+        <div class="cos-tabs"><button data-tab="paint" class="tab active" data-t="paints"></button><button data-tab="rim" class="tab" data-t="rims"></button><button data-tab="decal" class="tab" data-t="decals"></button></div>
+        <div id="cos-list" class="swatches"></div>
+      </div>
+      <div id="car-list" class="car-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== SHOP ===== -->
+  <div id="shop" class="screen sub hidden">
+    <div class="topbar"><button class="icon-btn back">←</button><h1 data-t="shop"></h1><div class="currency"><span class="pill coins">🪙 <b class="v-coins">0</b></span><span class="pill gems">💎 <b class="v-gems">0</b></span></div></div>
+    <div class="shop-tabs"><button data-tab="powerups" class="tab active" data-t="powerups"></button><button data-tab="paints" class="tab" data-t="paints"></button><button data-tab="rims" class="tab" data-t="rims"></button><button data-tab="decals" class="tab" data-t="decals"></button><button data-tab="exchange" class="tab" data-t="exchange"></button></div>
+    <div id="shop-list" class="cards shop-cards"></div>
+  </div>
+
+  <!-- ===== QUESTS ===== -->
+  <div id="quests" class="screen sub hidden">
+    <div class="topbar"><button class="icon-btn back">←</button><h1 data-t="quests"></h1><div class="currency"><span class="pill coins">🪙 <b class="v-coins">0</b></span><span class="pill gems">💎 <b class="v-gems">0</b></span></div></div>
+    <div id="quest-list" class="quest-list"></div>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+  <div id="settings" class="modal hidden"><div class="box">
+    <h2 data-t="settings"></h2>
+    <div class="setting"><span data-t="language"></span><div class="seg"><button data-lang="de">Deutsch</button><button data-lang="en">English</button></div></div>
+    <div class="setting"><span data-t="sound"></span><button id="set-sound" class="toggle"></button></div>
+    <div class="setting"><span data-t="tilt"></span><button id="set-tilt" class="toggle"></button></div>
+    <button class="big-btn pink close" data-t="back"></button>
+  </div></div>
+
+  <div id="pause" class="modal hidden"><div class="box">
+    <h2 data-t="pause"></h2>
+    <button id="btn-resume" class="big-btn cyan" data-t="resume"></button>
+    <button id="btn-quit" class="big-btn purple" data-t="quit"></button>
+  </div></div>
+
+  <div id="results" class="modal hidden"><div class="box results-box">
+    <h2 data-t="results"></h2>
+    <div id="res-place" class="res-place"></div>
+    <div id="res-rows" class="res-rows"></div>
+    <div id="res-quests" class="res-quests"></div>
+    <div class="row"><button id="btn-again" class="big-btn pink" data-t="again"></button><button id="btn-menu" class="big-btn cyan" data-t="menu"></button></div>
+  </div></div>
+
+  <div id="toast"></div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
