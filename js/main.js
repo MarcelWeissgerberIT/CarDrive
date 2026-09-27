@@ -178,6 +178,7 @@ function buildPowerupButtons() {
     const b = document.createElement('button'); b.className = 'pu-btn'; b.style.backgroundImage = `url(${p.img})`; b.dataset.id = p.id;
     b.innerHTML = `<span class="cnt">${raceInventory[p.id] || 0}</span>`;
     b.onpointerdown = e => { e.stopPropagation(); if (game.usePowerup(p.id)) { b.querySelector('.cnt').textContent = raceInventory[p.id]; } };
+    b.classList.toggle('hidden', !(raceInventory[p.id] > 0));
     hud.pus.appendChild(b);
   });
 }
@@ -190,7 +191,7 @@ function updateHud(h) {
   if (E.magnet > 0) fx.push(`🧲 ${t('magnet')} ${E.magnet.toFixed(0)}s`); if (E.slowmo > 0) fx.push(`⏳ ${t('slowmo')} ${E.slowmo.toFixed(0)}s`); if (E.doubler > 0) fx.push(`✨ ${t('activeDoubler')}`);
   hud.effects.innerHTML = fx.map(f => `<span class="pill">${f}</span>`).join('');
   hud.lines.classList.toggle('on', E.nitro > 0);
-  hud.pus.querySelectorAll('.pu-btn').forEach(b => { b.disabled = !(h.inventory[b.dataset.id] > 0) || h.state !== 'race'; });
+  hud.pus.querySelectorAll('.pu-btn').forEach(b => { const has = h.inventory[b.dataset.id] > 0; b.classList.toggle('hidden', !has); b.disabled = !has || h.state !== 'race'; });
 }
 function onRaceEvent(type, v) {
   if (type === 'crash') { hud.flash.classList.add('hit'); setTimeout(() => hud.flash.classList.remove('hit'), 80); if (navigator.vibrate) navigator.vibrate(120); }

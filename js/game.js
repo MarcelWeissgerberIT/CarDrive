@@ -42,8 +42,12 @@ export class RaceGame {
   }
   applyAspect() {
     const portrait = this.camera.aspect < 1;
-    if (this.roof) this.roof.visible = !portrait;
-    if (this.pillars) this.pillars.forEach(p => { p.position.x = Math.sign(p.position.x) * (portrait ? 0.95 : 1.32); });
+    this.pitch = portrait ? -0.16 : -0.07;
+    if (this.cockpit) this.cockpit.position.y = portrait ? -0.36 : -0.24;
+    // keep A-pillars and sun visor at the screen edges whatever the aspect ratio
+    const halfW = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * 1.05 * this.camera.aspect;
+    if (this.roof) { this.roof.visible = !portrait; this.roof.position.y = 0.80 - this.pitch * 1.05 - this.cockpit.position.y; }
+    if (this.pillars) this.pillars.forEach(p => { p.position.x = Math.sign(p.position.x) * (portrait ? 0.95 : Math.max(1.32, halfW * 0.94)); });
   }
 
   // ---------- setup ----------
@@ -134,7 +138,7 @@ export class RaceGame {
     }
 
     // cockpit (attached to camera)
-    this.camera.position.set(0, 1.35, 0); this.camera.rotation.set(0, 0, 0);
+    this.camera.position.set(0, 1.55, 0); this.camera.rotation.set(0, 0, 0);
     while (this.camera.children.length > (night ? 1 : 0)) this.camera.remove(this.camera.children[this.camera.children.length - 1]);
     const cp = this.cockpit = new THREE.Group();
     const pm = mat(paint); const dash = mat('#2b1b3f', { rough: 0.7 }); const trim = mat('#ff5fb3');
@@ -388,10 +392,10 @@ export class RaceGame {
     // camera
     this.shake = Math.max(0, this.shake - dt * 1.2);
     const sh = this.shake, sp = this.speed / 62;
-    this.camera.position.set(Math.sin(this.time * 41) * sh * 0.25, 1.35 + Math.sin(this.time * 27) * (0.01 * sp + sh * 0.2), 0);
+    this.camera.position.set(Math.sin(this.time * 41) * sh * 0.25, 1.55 + Math.sin(this.time * 27) * (0.01 * sp + sh * 0.2), 0);
     this.camera.rotation.z = -this.steer * 0.05 - this.latVel * 0.005 + Math.sin(this.time * 37) * sh * 0.05;
     this.camera.rotation.y = -this.steer * 0.12 - this.bend(60) * 0.004;
-    this.camera.rotation.x = -0.02 + Math.sin(this.time * 23) * sh * 0.03;
+    this.camera.rotation.x = (this.pitch ?? -0.07) + Math.sin(this.time * 23) * sh * 0.03;
     this.shieldMesh.visible = this.effects.shield > 0;
     if (this.shieldMesh.visible) this.shieldMesh.material.opacity = 0.14 + Math.sin(this.time * 6) * 0.06;
   }
