@@ -5,38 +5,29 @@ on:
     branches: [main, master, 'claude/**']
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Publish site to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          publish_branch: gh-pages
-          exclude_assets: '.github,README.md'
-          force_orphan: true
-          commit_message: 'Deploy ${{ github.sha }}'
+          path: .
 
-      - name: Point GitHub Pages at the gh-pages branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          body='{"build_type":"legacy","source":{"branch":"gh-pages","path":"/"}}'
-          echo "--- current pages config"; gh api "repos/$REPO/pages" || true
-          echo "--- update"; echo "$body" | gh api -X PUT "repos/$REPO/pages" --input - \
-            || { echo "--- create"; echo "$body" | gh api -X POST "repos/$REPO/pages" --input - || true; }
-          echo "--- pages config now"; gh api "repos/$REPO/pages" || true
-          echo "--- environment"; gh api "repos/$REPO/environments/github-pages" || true
-          echo "Site: https://$(echo "$REPO" | cut -d/ -f1 | tr 'A-Z' 'a-z').github.io/$(echo "$REPO" | cut -d/ -f2)/"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - run: echo "Deployed to ${{ steps.deployment.outputs.page_url }}"
