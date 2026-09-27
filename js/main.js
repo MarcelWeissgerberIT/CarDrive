@@ -165,6 +165,7 @@ function startRace(track) {
   hud.racers.innerHTML = `<img class="racer-av you" src="${car.img}" alt="">` + OPPONENTS.map(o => `<img class="racer-av" data-id="${o.id}" src="${o.img}" alt="">`).join('');
   buildPowerupButtons(); lastCd = null; hud.cd.textContent = ''; hud.lines.classList.remove('on');
   input.set(0); input.tiltEnabled = S.tilt;
+  try { screen.orientation?.lock?.('landscape').catch(() => {}); } catch (e) { /* not supported */ }
   game.resize();
   game.start({ track, car, paint: paintColor(), rim: rimColor(), decal: decalEmoji(), inventory: raceInventory, cb: {
     onHud: updateHud, onCountdown: n => { hud.cd.textContent = n > 0 ? n : t('go'); hud.cd.classList.remove('pop'); void hud.cd.offsetWidth; hud.cd.classList.add('pop'); if (n <= 0) { setTimeout(() => hud.cd.textContent = '', 900); setTimeout(() => $('#steer-hint').classList.add('hidden'), 3500); } },

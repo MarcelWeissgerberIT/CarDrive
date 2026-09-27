@@ -26,6 +26,7 @@ python3 -m http.server 8080
 - **Neigung** (optional in den Einstellungen) – Tablet kippen
 - Tastatur: `←` `→` oder `A` `D`
 - Power-up-Buttons links antippen (Nitro, Schild, Magnet, Zeitlupe)
+- iPhone/iPad: am besten über „Teilen → Zum Home-Bildschirm“ installieren, dann läuft das Spiel ohne Safari-Leisten im Vollbild
 
 ## Features
 
